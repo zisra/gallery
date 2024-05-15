@@ -55,7 +55,15 @@ function CarouselControls(props: {
 	onCloseCarousel: () => void;
 	onAutoPlay: () => void;
 }) {
-	return <div></div>;
+	return (
+		<div>
+			<button
+				onClick={() => {
+					props.onCloseCarousel();
+				}}
+			></button>
+		</div>
+	);
 }
 
 export function MediaCarousel(props: {
