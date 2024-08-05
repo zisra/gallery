@@ -22,7 +22,7 @@ import {
 export interface FileData {
 	size: number;
 	type: string;
-	data: ArrayBuffer;
+	data: Blob;
 }
 
 export type DirectoryContents =
@@ -65,19 +65,18 @@ async function handleDirectory(
 	}
 	return contents;
 }
-
 async function handleFile(handle: FileSystemFileHandle): Promise<FileData> {
 	const file = await handle.getFile();
 
 	return {
 		size: file.size,
 		type: file.type,
-		data: await file.arrayBuffer(),
+		data: file,
 	};
 }
 
 function isIgnoredFile(name: string) {
-	const ingoredFiles = ['.DS_Store'];
+	const ingoredFiles = ['.DS_Store', 'Thumbs.db'];
 	return ingoredFiles.includes(name);
 }
 
@@ -103,7 +102,7 @@ function HomepageHeader() {
 						</DropdownMenuItem>
 						<DropdownMenuItem>
 							<GithubIcon className="mr-2 w-4 h-4" />
-							<a href="https://github.com" target="_blank">
+							<a href="https://github.com" target="_blank" className="w-full">
 								GitHub
 							</a>
 						</DropdownMenuItem>
@@ -131,6 +130,9 @@ export function FileUploadButton(props: {
 
 	async function handleDrop(event: DragEvent<HTMLDivElement>) {
 		event.preventDefault();
+		if (event.dataTransfer.items.length === 0) {
+			return;
+		}
 		const file = event.dataTransfer.items[0];
 
 		if (file.kind === 'file') {
